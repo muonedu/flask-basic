@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 import os
 
@@ -27,38 +27,36 @@ class Restaurant(db.Model):
 # routing for homepage ('/')
 @app.route('/')
 def index():
-	return render_template('index.html')
+	items = Restaurant.query.all()
+	return render_template('index.html', data=items)
 
 @app.route('/showItem')
 def show():
 	items = [ 'Rendang', 'Ayam', 'Ikan', 'Teh es']
-
 	return render_template('index.html', items=items)
 
 @app.route('/addItem', methods=["GET", "POST"])
 def additem():
 	if request.method == 'POST':
-		name = request.form['name']
-		price = request.form['price']
+		nameItem = request.form['name']
+		price = int(request.form['price'])
 		amount = request.form['amount']
 		marks = request.form['marks']
 
 		#check database
-		item = Restaurant.query.filter_by(name=name).first()
-
+		item = Restaurant.query.filter_by(name=nameItem).first()
 		if not item:
-			new_item = Restaurant(name=name, price=price, amount=amount, marks=marks)
-			db.session.add()
+			new_item = Restaurant(name=nameItem, price=price, amount=amount, marks=marks)
+			db.session.add(new_item)
 			db.session.commit()
 			result = {
 				'message': 'Data has been added'
 			}
-			return render_template('index.html', msg=result)
+			return redirect('/')
 		if item:
 			return render_template('index.html')
 	else:
 		return render_template('index.html')
-
 
 @app.route('/showPrice')
 def showPrice():
