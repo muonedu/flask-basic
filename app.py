@@ -24,6 +24,10 @@ class Restaurant(db.Model):
 		return self.name
 # ------------------------------------------------------------------
 
+# routing for homepage ('/')
+@app.route('/')
+def index():
+	return render_template('index.html')
 
 @app.route('/showItem')
 def show():
@@ -38,6 +42,7 @@ def additem():
 		price = request.form['price']
 		amount = request.form['amount']
 		marks = request.form['marks']
+
 		#check database
 		item = Restaurant.query.filter_by(name=name).first()
 
@@ -53,10 +58,6 @@ def additem():
 			return render_template('index.html')
 	else:
 		return render_template('index.html')
-
-Update
-show/GET
-delete item
 
 
 @app.route('/showPrice')
